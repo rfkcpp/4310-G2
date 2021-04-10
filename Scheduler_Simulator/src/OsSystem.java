@@ -5,7 +5,7 @@ public class OsSystem {
 	
 	
 	//an array List which contains Processes
-	private ArrayList<Process> processes;
+	private ArrayList<Process> system_processes;
 	
 	//a variable that holds the number of processes
 	private int total_processes;
@@ -21,7 +21,7 @@ public class OsSystem {
 	//constructor
 	public OsSystem(int k, int avg, int sd, int total_p) {
 		
-		processes = new ArrayList<Process>(total_p);
+		system_processes = new ArrayList<Process>(total_p);
 		
 		max_arrival_time = k;
 		average = avg;
@@ -38,13 +38,19 @@ public class OsSystem {
 	
 	//function deletes all processes and refills the processes array list
 	public void refill() {
-		processes = new ArrayList<Process>();
+		system_processes = new ArrayList<Process>();
 		fill_processes();
 	}//end of refill
 	
 	
 	//FIFO Scheduler -------------------------------------------------------------------------------------------------------------
 	public double fifo_scheduler() {
+		
+		//copying the system_processes ArrayList
+		ArrayList<Process> processes = new ArrayList<Process>();
+		for(int i=0 ; i<total_processes; i++) {
+			processes.add(system_processes.get(i).clone());
+		}
 		
 		int current_time =-1;
 		
@@ -53,7 +59,7 @@ public class OsSystem {
 		
 		
 		
-		while (!all_done()) {
+		while (!all_done(processes)) {
 			
 			current_time+=1;
 			
@@ -94,7 +100,7 @@ public class OsSystem {
 		}//end of while (!all_done())
 		
 		
-		//computing the average turnaround time
+		//computing the average turn around time
 		double average_turnaround;
 		double total_turnaround=0.0;
 		for (int k =0; k<total_processes; k++)
@@ -115,6 +121,14 @@ public class OsSystem {
 	//Shortest job first scheduler---------------------------------------------------------------------------------------------
 	public double srj_scheduler() {
 		
+		
+		//Deep copying the system_processes Array_List
+		ArrayList<Process> processes = new ArrayList<Process>();
+		for(int i=0 ; i<total_processes; i++) {
+			processes.add(system_processes.get(i).clone());
+		}
+		
+		
 		int current_time =-1;
 		
 		//holds the index of the running process at each current time  tick
@@ -122,7 +136,7 @@ public class OsSystem {
 		
 		
 		
-		while (!all_done()) {
+		while (!all_done(processes)) {
 			
 			current_time+=1;
 			
@@ -181,7 +195,7 @@ public class OsSystem {
 		double average_turnaround;
 		double total_turnaround=0.0;
 		for (int k =0; k<total_processes; k++)
-			total_turnaround = total_turnaround+processes.get(k).get_turnaround_time();
+			total_turnaround = total_turnaround+ processes.get(k).get_turnaround_time();
 		average_turnaround = total_turnaround/total_processes;
 		
 	
@@ -215,7 +229,7 @@ public class OsSystem {
 			
 			p.set_turnaround_time(-1);
 			
-			processes.add(p);
+			system_processes.add(p);
 		
 			}
 	
@@ -247,7 +261,7 @@ public class OsSystem {
 	
 	
 	//this function returns true if all the processes are finished the execution
-	private boolean all_done() {
+	private boolean all_done(ArrayList<Process> processes) {
 		
 		boolean result=true;
 		

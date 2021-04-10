@@ -7,7 +7,7 @@ public class Driver {
 	
 	public static void main(String[] args) {
 		
-		OsSystem mySystem = new OsSystem(1000,450,1,120);
+		OsSystem mySystem = new OsSystem(100,10,1,200);
 	
 
 		

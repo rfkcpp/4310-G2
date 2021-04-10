@@ -80,6 +80,15 @@ public class Process {
 	
 	}//end of is_done
 
+	public Process clone() {
+		Process p = new Process(id,total_cpu_time);
+		p.set_active(active);
+		p.set_arrival_time(arrival_time);
+		p.set_remaining_cpu_time(remaining_cpu_time);
+		p.set_turnaround_time(turnaround_time);
+		
+		return p;
+	}
 
 
 }//end of Process class
