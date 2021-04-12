@@ -113,6 +113,7 @@ public class OsSystem {
 		
 		
 		
+		
 	}//end of fifo_scheduler() -------------------------------------------------------------------------------------------------
 	
 	
@@ -139,7 +140,6 @@ public class OsSystem {
 		while (!all_done(processes)) {
 			
 			current_time+=1;
-			
 			
 			
 			if (running >=0) {
@@ -191,7 +191,85 @@ public class OsSystem {
 		}//end of while (!all_done())
 		
 		
-		//computing the average turnaround time
+		//computing the average turn around time
+		double average_turnaround;
+		double total_turnaround=0.0;
+		for (int k =0; k<total_processes; k++)
+			total_turnaround = total_turnaround+ processes.get(k).get_turnaround_time();
+		average_turnaround = total_turnaround/total_processes;
+		
+	
+		
+		return average_turnaround;
+	
+		
+		
+	}//end of Shortest Job First Scheduler ---------------------------------------------------------------------------------------
+	
+	
+	
+	
+	//Shortest remaining time first scheduler---------------------------------------------------------------------------------------------
+	public double srt_scheduler() {
+		
+		
+		//Deep copying the system_processes Array_List
+		ArrayList<Process> processes = new ArrayList<Process>();
+		for(int i=0 ; i<total_processes; i++) {
+			processes.add(system_processes.get(i).clone());
+		}
+		
+		
+		int current_time =-1;
+		
+		//holds the index of the running process at each current time  tick
+		int running  = -1;
+		
+		
+		
+		while (!all_done(processes)) {
+			
+			current_time+=1;
+			
+			
+			
+			if (running >=0) {
+				processes.get(running).set_remaining_cpu_time(processes.get(running).get_remianing_cpu_time()-1);
+				if (processes.get(running).get_remianing_cpu_time() == 0) {
+					processes.get(running).set_active(false);
+					processes.get(running).set_turnaround_time(current_time-(processes.get(running).get_arrival_time()));
+				}//end if running process has finished
+			}//end of if something has been running in last cycle
+			
+			
+			//setting the processes active
+			for (int i=0; i<total_processes; i++) {
+				if (processes.get(i).get_remianing_cpu_time()!=0   &&  processes.get(i).get_arrival_time()<=current_time) {
+					processes.get(i).set_active(true);
+				}
+			}
+			
+			
+			//setting the index of running process at this cycle
+			
+			
+			int shortest_remaining_time = Integer.MAX_VALUE;
+				
+			for (int j=0; j<total_processes; j++) {
+						
+				if (processes.get(j).is_active()  && processes.get(j).get_remianing_cpu_time()<shortest_remaining_time) {
+							running =j;
+							shortest_remaining_time = processes.get(j).get_remianing_cpu_time();
+					}
+				}
+			
+			
+
+		
+		}//end of while (!all_done())
+		
+		
+		//computing the average turn around time
 		double average_turnaround;
 		double total_turnaround=0.0;
 		for (int k =0; k<total_processes; k++)
@@ -204,9 +282,7 @@ public class OsSystem {
 		
 		
 		
-	}//end of Shortest Job First Scheduler ---------------------------------------------------------------------------------------
-	
-	
+	}//end of Shortest remaining job First Scheduler ---------------------------------------------------------------------------------------
 	
 	
 	
@@ -245,16 +321,18 @@ public class OsSystem {
 	private int gaussian_random() {
 		
 		Random ran = new Random();
-		return (int)(ran.nextGaussian() * standard_deviation + average);
+		return  (int)( ((ran.nextGaussian() * standard_deviation )+ average));
+		
+	     
+		
 	}
 	
 	//returns a random integer between 0 and max_arrival_time
 	// Range of Math.random -> 0.0 - 1.0
-	// 0.0 * (max - min) + min => min
-	// 1.0 * (max - min) + min => max - min + min => max
 	private int generate_arrival_time() {
 		
 		return (int)(Math.random()*(max_arrival_time));
+		
 	}
 	
 	//Rick###############################################################################################################
